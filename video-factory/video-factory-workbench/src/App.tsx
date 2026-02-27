@@ -372,7 +372,7 @@ function StatCard({ icon: Icon, label, value, color }: { icon: any; label: strin
 }
 
 // 详情区块
-function DetailSection({ icon: Icon, title, status, color, children }: { icon: any; title: string; status: string; color: string; children: React.ReactNode }) {
+function DetailSection({ icon: Icon, title, color, children }: { icon: any; title: string; color: string; children: React.ReactNode }) {
   const colorClasses: Record<string, string> = {
     blue: 'border-blue-500/30',
     purple: 'border-purple-500/30',
