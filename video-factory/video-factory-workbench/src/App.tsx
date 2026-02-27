@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Play, RotateCcw, Mic, Image, FileText, Film, ChevronRight, Zap, Terminal, CheckCircle2, Loader2, Clock, TrendingUp, Layers, Cpu } from 'lucide-react';
+import { Mic, Image, FileText, Film, Zap, Terminal, CheckCircle2, Loader2, Clock, Layers, Cpu } from 'lucide-react';
 
 // 真实项目数据
 const PROJECTS = [
@@ -31,18 +31,13 @@ const statusColors = {
   error: 'from-red-500/20 to-rose-500/20 border-red-500/30'
 };
 
-const statusLabels = {
-  pending: '等待中', script: '脚本创作', voice: '语音合成', images: '配图生成',
-  timeline: '时间轴', composing: '视频合成', completed: '已完成', error: '错误'
-};
-
 function App() {
   const [selectedProject] = useState(PROJECTS[0]);
   const [agents, setAgents] = useState(INITIAL_AGENTS);
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs] = useState<{ time: string; message: string; type: string }[]>([]);
   const [isRunningAll, setIsRunningAll] = useState(false);
 
-  const addLog = (message, type = 'info') => {
+  const addLog = (message: string, type: string = 'info') => {
     const time = new Date().toLocaleTimeString('zh-CN');
     setLogs(prev => [...prev, { time, message, type }]);
   };
