@@ -288,13 +288,13 @@ function App() {
 
               <div className="space-y-5">
                 {selectedProject.script && (
-                  <DetailSection icon={FileText} title="口播稿" status="completed" color="blue">
+                  <DetailSection icon={FileText} title="口播稿" color="blue">
                     <div className="text-sm text-gray-300">{selectedProject.script.wordCount} 字 · {selectedProject.script.duration} 秒</div>
                   </DetailSection>
                 )}
 
                 {selectedProject.images && (
-                  <DetailSection icon={Image} title={`PPT配图 (${selectedProject.images.completed}/${selectedProject.images.count}张)`} status="completed" color="purple">
+                  <DetailSection icon={Image} title={`PPT配图 (${selectedProject.images.completed}/${selectedProject.images.count}张)`} color="purple">
                     <div className="grid grid-cols-6 gap-2 mt-2">
                       {Array.from({ length: Math.min(selectedProject.images.count, 12) }, (_, i) => (
                         <div key={i} className="aspect-video bg-gradient-to-br from-purple-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center text-xs font-medium border border-white/5">
@@ -311,7 +311,7 @@ function App() {
                 )}
 
                 {selectedProject.voice && (
-                  <DetailSection icon={Mic} title="语音合成" status="completed" color="green">
+                  <DetailSection icon={Mic} title="语音合成" color="green">
                     <div className="text-sm text-gray-300">总时长: {selectedProject.voice.duration} 秒</div>
                   </DetailSection>
                 )}
