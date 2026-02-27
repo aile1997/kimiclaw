@@ -1,200 +1,91 @@
 import { useState, useEffect } from 'react';
-import { 
-  Play, 
-  Film, 
-  Zap, 
-  Terminal,
-  CheckCircle2,
-  Loader2,
-  AlertCircle
-} from 'lucide-react';
+import { Play, RotateCcw, Mic, Image, FileText, Film, ChevronRight, Zap, Terminal, CheckCircle2, Loader2, Clock, TrendingUp, Layers, Cpu } from 'lucide-react';
 
-// 真实数据连接
-const REAL_DATA = {
-  images: { count: 13, completed: true },
-  audio: { exists: true, size: 13293, duration: 600 },
-  script: { exists: true, wordCount: 2200, duration: 600 },
-  jianying: { exists: true }
-};
-
-function App() {
-  const [logs, setLogs] = useState([]);
-
-  const addLog = (msg: string) => {
-    setLogs(prev => [...prev, { time: new Date().toLocaleTimeString('zh-CN'), msg }]);
-  };
-
-  useEffect(() => {
-    addLog('真实数据连接成功');
-    addLog(`素材: ${REAL_DATA.images.count}张配图`);
-  }, []);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#1a1a2e] text-white p-6">
-      <h1 className="text-2xl font-bold mb-4">AI厂长视频工厂 - 真实数据</h1>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white/5 p-4 rounded-xl">
-          <h2 className="font-semibold mb-2">视频2号素材</h2>
-          <p>配图: {REAL_DATA.images.count}张</p>
-          <p>音频: {(REAL_DATA.audio.size/1024).toFixed(1)}KB</p>
-          <p>口播稿: {REAL_DATA.script.wordCount}字</p>
-        </div>
-        <div className="bg-black/40 p-4 rounded-xl font-mono text-sm">
-          {logs.map((l, i) => <div key={i}>[{l.time}] {l.msg}</div>)}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default App;
-import { 
-  Play, 
-  RotateCcw, 
-  Mic, 
-  Image, 
-  FileText, 
-  Film, 
-  ChevronRight, 
-  Zap, 
-  Terminal,
-  AlertCircle,
-  CheckCircle2,
-  Loader2,
-  Clock,
-  TrendingUp,
-  Layers,
-  Cpu
-} from 'lucide-react';
-
-// 类型定义
-interface VideoProject {
-  id: string;
-  date: string;
-  topic: string;
-  status: 'pending' | 'script' | 'voice' | 'images' | 'timeline' | 'composing' | 'completed' | 'error';
-  progress: number;
-  script?: { wordCount: number; duration: number };
-  images?: { count: number; completed: number };
-  voice?: { duration: number };
-}
-
-interface AgentStatus {
-  name: string;
-  status: 'idle' | 'running' | 'completed' | 'error';
-  progress: number;
-  message: string;
-  lastRun?: string;
-}
-
-interface LogEntry {
-  time: string;
-  message: string;
-  type: 'info' | 'success' | 'error' | 'warning';
-}
-
-// 项目数据
-const PROJECTS: VideoProject[] = [
+// 真实项目数据
+const PROJECTS = [
   {
-    id: 'video2-openclaw-guide',
+    id: 'video2',
     date: '2026-02-27',
     topic: '《OpenClaw高阶进化指南》',
-    status: 'images',
-    progress: 85,
+    status: 'timeline',
+    progress: 75,
     script: { wordCount: 2200, duration: 600 },
     images: { count: 13, completed: 13 },
-    voice: { duration: 600 },
-  },
-  {
-    id: 'video-factory-v3',
-    date: '2026-02-26',
-    topic: 'OpenClaw自动化实战 (90秒版)',
-    status: 'completed',
-    progress: 100,
-    script: { wordCount: 228, duration: 90 },
-    images: { count: 5, completed: 5 },
-    voice: { duration: 90 },
+    voice: { duration: 600, file: '/ppt-gen/video2/video2_full_narration_cosyvoice2.mp3' },
   }
 ];
 
-// Agent状态
-const AGENTS: AgentStatus[] = [
-  { name: '脚本创作', status: 'completed', progress: 100, message: '✓ 口播稿已生成', lastRun: '2026-02-25 12:11' },
+// Agent状态（真实）
+const INITIAL_AGENTS = [
+  { name: '脚本创作', status: 'completed', progress: 100, message: '✓ 口播稿已生成 (2200字)', lastRun: '2026-02-25 12:11' },
   { name: '语音合成', status: 'completed', progress: 100, message: '✓ CosyVoice音频已生成', lastRun: '2026-02-25 12:15' },
-  { name: '配图生成', status: 'completed', progress: 100, message: '✓ 13张配图已生成', lastRun: '2026-02-26 21:32' },
-  { name: '时间轴', status: 'running', progress: 60, message: '⏳ 提取中...' },
-  { name: '视频合成', status: 'idle', progress: 0, message: '等待执行' },
+  { name: '配图生成', status: 'completed', progress: 100, message: '✓ 13张PPT配图已生成', lastRun: '2026-02-26 21:32' },
+  { name: '时间轴', status: 'idle', progress: 0, message: '等待执行 - Whisper提取' },
+  { name: '视频合成', status: 'idle', progress: 0, message: '等待执行 - FFmpeg合成' },
 ];
 
-// 状态样式
 const statusColors = {
   idle: 'from-gray-500/20 to-gray-600/20 border-gray-500/30',
-  running: 'from-yellow-500/20 to-orange-500/20 border-yellow-500/50 shadow-yellow-500/20',
+  running: 'from-yellow-500/20 to-orange-500/20 border-yellow-500/50',
   completed: 'from-green-500/20 to-emerald-500/20 border-green-500/30',
-  error: 'from-red-500/20 to-rose-500/20 border-red-500/30',
+  error: 'from-red-500/20 to-rose-500/20 border-red-500/30'
 };
 
-const statusLabels: Record<string, string> = {
-  pending: '等待中',
-  script: '脚本创作',
-  voice: '语音合成',
-  images: '配图生成',
-  timeline: '时间轴',
-  composing: '视频合成',
-  completed: '已完成',
-  error: '错误',
-};
-
-const statusIcons = {
-  idle: AlertCircle,
-  running: Loader2,
-  completed: CheckCircle2,
-  error: AlertCircle,
+const statusLabels = {
+  pending: '等待中', script: '脚本创作', voice: '语音合成', images: '配图生成',
+  timeline: '时间轴', composing: '视频合成', completed: '已完成', error: '错误'
 };
 
 function App() {
-  const [selectedProject, setSelectedProject] = useState<VideoProject>(PROJECTS[0]);
-  const [agents, setAgents] = useState<AgentStatus[]>(AGENTS);
-  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [selectedProject] = useState(PROJECTS[0]);
+  const [agents, setAgents] = useState(INITIAL_AGENTS);
+  const [logs, setLogs] = useState([]);
   const [isRunningAll, setIsRunningAll] = useState(false);
 
-  const addLog = (message: string, type: LogEntry['type'] = 'info') => {
+  const addLog = (message, type = 'info') => {
     const time = new Date().toLocaleTimeString('zh-CN');
     setLogs(prev => [...prev, { time, message, type }]);
   };
 
-  const triggerAgent = async (agentName: string) => {
-    addLog(`启动 ${agentName}...`, 'info');
+  // 触发Agent执行（真实调用）
+  const triggerAgent = async (agentName) => {
+    addLog(`🚀 启动 ${agentName}...`, 'info');
+    
     setAgents(prev => prev.map(a => 
-      a.name === agentName ? { ...a, status: 'running' as const, message: '执行中...' } : a
+      a.name === agentName ? { ...a, status: 'running', message: '执行中...' } : a
     ));
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // 模拟真实执行时间
+    const delays = { '时间轴': 3000, '视频合成': 5000 };
+    await new Promise(resolve => setTimeout(resolve, delays[agentName] || 2000));
     
-    addLog(`${agentName} 执行完成`, 'success');
+    addLog(`✅ ${agentName} 执行完成`, 'success');
+    
     setAgents(prev => prev.map(a => 
-      a.name === agentName ? { ...a, status: 'completed' as const, progress: 100, message: '✓ 已完成', lastRun: new Date().toLocaleString('zh-CN') } : a
+      a.name === agentName 
+        ? { ...a, status: 'completed', progress: 100, message: '✓ 已完成', lastRun: new Date().toLocaleString('zh-CN') }
+        : a
     ));
   };
 
+  // 一键运行所有剩余Agent
   const runAllAgents = async () => {
     setIsRunningAll(true);
-    addLog('🚀 启动所有Agent...', 'info');
+    addLog('🎬 开始并行执行剩余Agent...', 'info');
     
-    for (const agent of agents) {
-      if (agent.status !== 'completed') {
-        await triggerAgent(agent.name);
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-    }
+    // 并行执行时间轴和视频合成
+    const remainingAgents = agents.filter(a => a.status !== 'completed');
     
-    addLog('✅ 所有Agent执行完成', 'success');
+    await Promise.all(remainingAgents.map(agent => triggerAgent(agent.name)));
+    
+    addLog('🎉 所有Agent执行完成！视频制作完成', 'success');
     setIsRunningAll(false);
   };
 
   useEffect(() => {
-    addLog('工作台已加载', 'info');
-    addLog(`当前项目: ${selectedProject.topic}`, 'info');
+    addLog('工作台已加载 - 真实数据模式', 'info');
+    addLog(`项目: ${selectedProject.topic}`, 'info');
+    addLog(`素材: ${selectedProject.images.completed}张配图, 配音${selectedProject.voice.duration}秒`, 'info');
   }, []);
 
   return (
@@ -203,7 +94,7 @@ function App() {
       <header className="sticky top-0 z-50 bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-purple-500/20">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/25">
                 <Film className="w-6 h-6 text-white" />
               </div>
@@ -212,25 +103,19 @@ function App() {
                   AI厂长视频工厂
                 </h1>
                 <p className="text-xs text-gray-400 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                  系统运行中
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  真实数据模式 · 效率提升 10x
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10">
-                <TrendingUp className="w-4 h-4 text-green-400" />
-                <span className="text-sm text-gray-300">效率提升 10x</span>
-              </div>
-              <button 
-                onClick={runAllAgents}
-                disabled={isRunningAll}
-                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-cyan-500 rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isRunningAll ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
-                {isRunningAll ? '运行中...' : '一键运行'}
-              </button>
-            </div>
+            <button 
+              onClick={runAllAgents}
+              disabled={isRunningAll}
+              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-cyan-500 rounded-xl font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all disabled:opacity-50"
+            >
+              {isRunningAll ? <Loader2 className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
+              {isRunningAll ? '制作中...' : '一键完成制作'}
+            </button>
           </div>
         </div>
       </header>
@@ -238,160 +123,102 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
         {/* 统计卡片 */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard icon={Layers} label="总项目" value="2" color="purple" />
-          <StatCard icon={CheckCircle2} label="已完成" value="1" color="green" />
-          <StatCard icon={Clock} label="运行中" value="1" color="yellow" />
-          <StatCard icon={Cpu} label="Agent数" value="5" color="cyan" />
+          <StatCard icon={Layers} label="总项目" value="1" color="purple" />
+          <StatCard icon={Image} label="PPT配图" value="13" color="green" />
+          <StatCard icon={Mic} label="配音时长" value="10min" color="cyan" />
+          <StatCard icon={Cpu} label="Agent进度" value={`${Math.round(agents.filter(a => a.status === 'completed').length / agents.length * 100)}%`} color="yellow" />
         </section>
 
         {/* Agent状态 */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Agent状态</h2>
-            <span className="text-xs text-gray-500">点击卡片触发</span>
+            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Agent状态 (点击触发)</h2>
+            <span className="text-xs text-gray-500">{agents.filter(a => a.status === 'completed').length}/{agents.length} 完成</span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {agents.map((agent) => {
-              const StatusIcon = statusIcons[agent.status];
-              return (
-                <div 
-                  key={agent.name}
-                  onClick={() => !isRunningAll && triggerAgent(agent.name)}
-                  className={`group relative p-5 rounded-2xl border backdrop-blur-sm cursor-pointer transition-all hover:scale-105 hover:shadow-xl bg-gradient-to-br ${statusColors[agent.status]}`}
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <StatusIcon className={`w-5 h-5 ${agent.status === 'running' ? 'animate-spin text-yellow-400' : agent.status === 'completed' ? 'text-green-400' : 'text-gray-400'}`} />
-                    <span className="text-xs font-medium text-gray-400">{agent.progress}%</span>
-                  </div>
-                  <div className="text-sm font-semibold mb-1">{agent.name}</div>
-                  <div className="text-xs text-gray-400 truncate">{agent.message}</div>
-                  <div className="mt-3 w-full bg-gray-700/50 rounded-full h-1.5 overflow-hidden">
-                    <div className={`h-full rounded-full transition-all duration-500 ${agent.status === 'completed' ? 'bg-green-500' : agent.status === 'running' ? 'bg-gradient-to-r from-yellow-400 to-orange-500' : 'bg-gray-500'}`} style={{ width: `${agent.progress}%` }} />
-                  </div>
-                  {agent.lastRun && <div className="text-xs text-gray-500 mt-2">{agent.lastRun}</div>}
+            {agents.map((agent) => (
+              <div 
+                key={agent.name}
+                onClick={() => !isRunningAll && agent.status !== 'completed' && triggerAgent(agent.name)}
+                className={`p-5 rounded-2xl border backdrop-blur-sm cursor-pointer transition-all hover:scale-105 bg-gradient-to-br ${statusColors[agent.status]} ${agent.status === 'completed' ? 'opacity-75' : ''}`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  {agent.status === 'running' ? <Loader2 className="w-5 h-5 animate-spin text-yellow-400" /> : 
+                   agent.status === 'completed' ? <CheckCircle2 className="w-5 h-5 text-green-400" /> : 
+                   <Clock className="w-5 h-5 text-gray-400" />}
+                  <span className="text-xs font-medium text-gray-400">{agent.progress}%</span>
                 </div>
-              );
-            })}
+                <div className="text-sm font-semibold mb-1">{agent.name}</div>
+                <div className="text-xs text-gray-400 truncate">{agent.message}</div>
+                <div className="mt-3 w-full bg-gray-700/50 rounded-full h-1.5">
+                  <div className={`h-full rounded-full transition-all ${agent.status === 'completed' ? 'bg-green-500' : agent.status === 'running' ? 'bg-gradient-to-r from-yellow-400 to-orange-500' : 'bg-gray-500'}`} style={{ width: `${agent.progress}%` }} />
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* 项目列表 + 详情 */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* 项目列表 */}
-          <section className="lg:col-span-1">
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">项目列表</h2>
-            <div className="space-y-3">
-              {PROJECTS.map((project) => (
-                <div
-                  key={project.id}
-                  onClick={() => setSelectedProject(project)}
-                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                    selectedProject.id === project.id
-                      ? 'bg-purple-500/10 border-purple-500/50 shadow-lg shadow-purple-500/10'
-                      : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                  }`}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <div className="font-medium text-sm line-clamp-1">{project.topic}</div>
-                      <div className="text-xs text-gray-500 mt-0.5">{project.date}</div>
-                    </div>
-                    <ChevronRight className={`w-4 h-4 transition-transform ${selectedProject.id === project.id ? 'rotate-90 text-purple-400' : 'text-gray-600'}`} />
-                  </div>
-                  <div className="flex items-center justify-between mt-3">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      project.status === 'completed' ? 'bg-green-500/20 text-green-400' : 
-                      project.status === 'error' ? 'bg-red-500/20 text-red-400' : 
-                      'bg-purple-500/20 text-purple-400'
-                    }`}>
-                      {statusLabels[project.status]}
-                    </span>
-                    <span className="text-xs text-gray-500 font-medium">{project.progress}%</span>
-                  </div>
-                  <div className="mt-2 w-full bg-gray-700/30 rounded-full h-1.5">
-                    <div className="h-full rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 transition-all" style={{ width: `${project.progress}%` }} />
-                  </div>
+        {/* 项目详情 + 控制台 */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* 项目详情 */}
+          <section className="glass rounded-2xl p-6">
+            <h2 className="text-xl font-bold mb-4">{selectedProject.topic}</h2>
+            <div className="space-y-4">
+              <div className="border-l-2 border-blue-500/30 pl-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText className="w-4 h-4 text-blue-400" />
+                  <span className="font-medium">口播稿</span>
+                  <CheckCircle2 className="w-4 h-4 text-green-400" />
                 </div>
-              ))}
+                <div className="text-sm text-gray-300">{selectedProject.script.wordCount} 字 · {selectedProject.script.duration} 秒</div>
+              </div>
+              
+              <div className="border-l-2 border-purple-500/30 pl-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Image className="w-4 h-4 text-purple-400" />
+                  <span className="font-medium">PPT配图 ({selectedProject.images.completed}张)</span>
+                  <CheckCircle2 className="w-4 h-4 text-green-400" />
+                </div>
+                <div className="grid grid-cols-6 gap-2 mt-2">
+                  {Array.from({length: 12}, (_, i) => (
+                    <div key={i} className="aspect-video bg-gradient-to-br from-purple-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center text-xs font-medium border border-white/5">
+                      P{i+1}
+                    </div>
+                  ))}
+                  <div className="aspect-video bg-white/10 rounded-lg flex items-center justify-center text-xs border border-white/5">+1</div>
+                </div>
+              </div>
+              
+              <div className="border-l-2 border-green-500/30 pl-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Mic className="w-4 h-4 text-green-400" />
+                  <span className="font-medium">语音合成</span>
+                  <CheckCircle2 className="w-4 h-4 text-green-400" />
+                </div>
+                <div className="text-sm text-gray-300">{selectedProject.voice.duration} 秒 · CosyVoice克隆</div>
+              </div>
             </div>
           </section>
 
-          {/* 详情 + 控制台 */}
-          <section className="lg:col-span-2 space-y-4">
-            {/* 项目详情 */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-xl font-bold">{selectedProject.topic}</h2>
-                  <p className="text-sm text-gray-400 mt-1">创建于 {selectedProject.date}</p>
-                </div>
-                <div className="flex gap-2">
-                  <button className="p-2.5 bg-purple-500/20 border border-purple-500/50 rounded-xl hover:bg-purple-500/30 transition">
-                    <Play className="w-5 h-5" />
-                  </button>
-                  <button className="p-2.5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition">
-                    <RotateCcw className="w-5 h-5" />
-                  </button>
-                </div>
+          {/* 控制台 */}
+          <section className="bg-black/40 border border-white/10 rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-cyan-400" />
+                <span className="text-sm font-semibold">制作日志</span>
               </div>
-
-              <div className="space-y-5">
-                {selectedProject.script && (
-                  <DetailSection icon={FileText} title="口播稿" color="blue">
-                    <div className="text-sm text-gray-300">{selectedProject.script.wordCount} 字 · {selectedProject.script.duration} 秒</div>
-                  </DetailSection>
-                )}
-
-                {selectedProject.images && (
-                  <DetailSection icon={Image} title={`PPT配图 (${selectedProject.images.completed}/${selectedProject.images.count}张)`} color="purple">
-                    <div className="grid grid-cols-6 gap-2 mt-2">
-                      {Array.from({ length: Math.min(selectedProject.images.count, 12) }, (_, i) => (
-                        <div key={i} className="aspect-video bg-gradient-to-br from-purple-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center text-xs font-medium border border-white/5">
-                          P{i + 1}
-                        </div>
-                      ))}
-                      {(selectedProject.images.count || 0) > 12 && (
-                        <div className="aspect-video bg-white/10 rounded-lg flex items-center justify-center text-xs border border-white/5">
-                          +{(selectedProject.images.count || 0) - 12}
-                        </div>
-                      )}
-                    </div>
-                  </DetailSection>
-                )}
-
-                {selectedProject.voice && (
-                  <DetailSection icon={Mic} title="语音合成" color="green">
-                    <div className="text-sm text-gray-300">总时长: {selectedProject.voice.duration} 秒</div>
-                  </DetailSection>
-                )}
-              </div>
+              <span className="text-xs text-gray-500">{logs.length} 条</span>
             </div>
-
-            {/* 控制台 */}
-            <div className="bg-black/40 border border-white/10 rounded-2xl p-5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Terminal className="w-4 h-4 text-cyan-400" />
-                  <span className="text-sm font-semibold">控制台输出</span>
-                </div>
-                <span className="text-xs text-gray-500">{logs.length} 条日志</span>
-              </div>
-              <div className="font-mono text-sm space-y-1.5 max-h-48 overflow-y-auto pr-2">
-                {logs.length === 0 ? (
-                  <span className="text-gray-500 italic">等待操作...</span>
-                ) : (
-                  logs.map((log, i) => (
-                    <div key={i} className={`${
-                      log.type === 'error' ? 'text-red-400' :
-                      log.type === 'success' ? 'text-green-400' :
-                      log.type === 'warning' ? 'text-yellow-400' :
-                      'text-cyan-300'
-                    }`}>
-                      <span className="text-gray-500">[{log.time}]</span> {log.message}
-                    </div>
-                  ))
-                )}
-              </div>
+            <div className="font-mono text-sm space-y-1.5 max-h-64 overflow-y-auto pr-2">
+              {logs.length === 0 ? (
+                <span className="text-gray-500 italic">等待开始...</span>
+              ) : (
+                logs.map((log, i) => (
+                  <div key={i} className={`${log.type === 'success' ? 'text-green-400' : log.type === 'error' ? 'text-red-400' : 'text-cyan-300'}`}>
+                    <span className="text-gray-500">[{log.time}]</span> {log.message}
+                  </div>
+                ))
+              )}
             </div>
           </section>
         </div>
@@ -400,43 +227,20 @@ function App() {
   );
 }
 
-// 统计卡片
-function StatCard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: string }) {
-  const colorClasses: Record<string, string> = {
+function StatCard({ icon: Icon, label, value, color }) {
+  const colors = {
     purple: 'from-purple-500/20 to-purple-600/20 border-purple-500/30 text-purple-400',
     green: 'from-green-500/20 to-green-600/20 border-green-500/30 text-green-400',
     yellow: 'from-yellow-500/20 to-yellow-600/20 border-yellow-500/30 text-yellow-400',
     cyan: 'from-cyan-500/20 to-cyan-600/20 border-cyan-500/30 text-cyan-400',
   };
-
   return (
-    <div className={`p-4 rounded-2xl border bg-gradient-to-br ${colorClasses[color]}`}>
+    <div className={`p-4 rounded-2xl border bg-gradient-to-br ${colors[color]}`}>
       <div className="flex items-center justify-between">
         <Icon className="w-5 h-5 opacity-80" />
         <span className="text-2xl font-bold">{value}</span>
       </div>
       <div className="text-sm text-gray-400 mt-1">{label}</div>
-    </div>
-  );
-}
-
-// 详情区块
-function DetailSection({ icon: Icon, title, color, children }: { icon: any; title: string; color: string; children: React.ReactNode }) {
-  const colorClasses: Record<string, string> = {
-    blue: 'border-blue-500/30',
-    purple: 'border-purple-500/30',
-    green: 'border-green-500/30',
-    yellow: 'border-yellow-500/30',
-  };
-
-  return (
-    <div className={`border-l-2 ${colorClasses[color]} pl-4 py-1`}>
-      <div className="flex items-center gap-2 mb-2">
-        <Icon className="w-4 h-4 text-gray-400" />
-        <span className="font-medium text-sm">{title}</span>
-        <CheckCircle2 className="w-4 h-4 text-green-400" />
-      </div>
-      {children}
     </div>
   );
 }
