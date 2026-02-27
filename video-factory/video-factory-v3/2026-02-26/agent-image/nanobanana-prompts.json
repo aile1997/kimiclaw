@@ -1,0 +1,37 @@
+{
+  "project": "OpenClaw自动化实战",
+  "style": "cyberpunk",
+  "resolution": "2752x1536",
+  "slides": [
+    {
+      "page": 1,
+      "type": "hook",
+      "duration": 3,
+      "prompt": "Cyberpunk warning sign, neon red and purple glow, glitch effect text 'STOP PAYING', dark background with digital noise, futuristic HUD elements, dramatic lighting, high contrast, cinematic composition, 16:9 aspect ratio, 2K resolution"
+    },
+    {
+      "page": 2,
+      "type": "pain_point",
+      "duration": 7,
+      "prompt": "Split screen comparison, left side frustrated developer at messy desk with old computer showing $20/month bill, right side sleek AI interface with glowing automation dashboard, cyberpunk aesthetic, neon blue and cyan accents, dark theme, data visualization, modern tech style, 16:9"
+    },
+    {
+      "page": 3,
+      "type": "solution",
+      "duration": 30,
+      "prompt": "Futuristic automation dashboard, timeline visualization with 8:30AM 12:30PM 7:00PM glowing time markers, progress bars showing video generation stages, cyberpunk UI design, dark background with neon purple and cyan highlights, minimalist icons, tech startup aesthetic, 16:9"
+    },
+    {
+      "page": 4,
+      "type": "demo",
+      "duration": 40,
+      "prompt": "Cyberpunk gallery showcase, 13 thumbnail previews in holographic grid layout, glowing frames around each image, progress indicators, dark theme with vibrant purple and cyan accents, professional presentation style, holographic display effect, 16:9"
+    },
+    {
+      "page": 5,
+      "type": "cta",
+      "duration": 10,
+      "prompt": "Cyberpunk outro screen, large QR code with neon purple frame, subscribe button with glow effect, social media icons floating, dark background, gradient accents from purple to cyan, call-to-action design, modern typography, 'Follow for More' text, 16:9"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+# NanoBanana配图提示词 - OpenClaw高阶技巧实战
+# 生成地址: https://nanobana.google
+
+## 第1页: Hook页 (3秒)
+Prompt:
+Cyberpunk warning sign, neon red and purple glow, glitch effect text "STOP", dark background with digital noise, futuristic HUD elements, dramatic lighting, high contrast, cinematic composition, 16:9 aspect ratio
+
+Style: 赛博朋克警示风格
+Duration: 3秒
+
+## 第2页: 痛点页 (7秒)
+Prompt:
+Split screen comparison, left side frustrated developer at messy desk with old computer, right side sleek AI interface with glowing interface, cyberpunk aesthetic, neon blue and cyan accents, dark theme, data visualization, modern tech style
+
+Style: 对比图风格
+Duration: 7秒
+
+## 第3页: 方案页 (30秒)
+Prompt:
+Futuristic automation dashboard, timeline visualization, glowing progress bars, 8:30AM 12:30PM 7:00PM time markers, cyberpunk UI design, dark background with neon purple and cyan highlights, minimalist icons, tech startup aesthetic
+
+Style: 流程图风格
+Duration: 30秒
+
+## 第4页: 演示页 (40秒)
+Prompt:
+Cyberpunk gallery showcase, 13 thumbnail previews in grid layout, glowing frames, progress indicators, dark theme with vibrant accents, professional presentation style, holographic display effect
+
+Style: 成果展示风格
+Duration: 40秒
+
+## 第5页: CTA页 (10秒)
+Prompt:
+Cyberpunk outro screen, QR code with neon frame, subscribe button with glow effect, social media icons, dark background, gradient accents from purple to cyan, call-to-action design, modern typography
+
+Style: 结尾引导风格
+Duration: 10秒
+
+---
+生成说明:
+1. 访问 https://nanobana.google
+2. 使用上述Prompt逐页生成
+3. 下载PNG格式，16:9比例
+4. 保存为 slide-01.png ~ slide-05.png

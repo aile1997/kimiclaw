@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "service": "gpt-sovits",
+  "endpoint": "http://localhost:9880",
+  "voice": {
+    "reference_audio": "reference/厂长声音样本.wav",
+    "reference_text": "这里是参考音频对应的文本内容",
+    "language": "zh"
+  },
+  "segments": [
+    {
+      "id": 1,
+      "text": "千万别再给ChatGPT交智商税了！",
+      "output": "segment-01.wav",
+      "speed": 1.0,
+      "emotion": "强调"
+    },
+    {
+      "id": 2,
+      "text": "你是不是每个月交20美元，结果还是写不出满意的代码？今天这个视频，可能让你直接把月费停了。",
+      "output": "segment-02.wav",
+      "speed": 1.0,
+      "emotion": "疑问"
+    },
+    {
+      "id": 3,
+      "text": "我用OpenClaw跑了一个月的定时任务，发现80%的重复工作都能自动化。早上8点半，它自动开始准备视频素材；中午12点半，推送进度报告；晚上7点，完整工程文件已经打包好了。",
+      "output": "segment-03.wav",
+      "speed": 1.0,
+      "emotion": "陈述"
+    },
+    {
+      "id": 4,
+      "text": "看，这是今早自动生成的13张PPT配图，赛博风格，直接能用。这是剪映项目文件，导入就能渲染。你只需要做三件事：审核、录音、发布。",
+      "output": "segment-04.wav",
+      "speed": 1.0,
+      "emotion": "展示"
+    },
+    {
+      "id": 5,
+      "text": "关注我，下期教你用数字人完全自动化。现在去试试，有问题评论区见。",
+      "output": "segment-05.wav",
+      "speed": 1.0,
+      "emotion": "号召"
+    }
+  ]
+}

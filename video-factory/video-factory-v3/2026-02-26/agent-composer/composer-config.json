@@ -1,0 +1,11 @@
+{
+  "slides_dir": "../agent-image",
+  "audio_file": "../agent-tts/final-voice.wav",
+  "timeline_file": "../agent-timeline/full-timeline.json",
+  "output_file": "../final/video-final.mp4",
+  "resolution": "1080x1920",
+  "fps": 30,
+  "transition_duration": 0.5,
+  "include_subtitles": true,
+  "subtitle_file": "../agent-timeline/subtitles.srt"
+}

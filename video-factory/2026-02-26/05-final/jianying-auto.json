@@ -1,0 +1,50 @@
+{
+  "version": "3.0",
+  "project": {
+    "name": "AI厂长-2026-02-26-OpenClaw高阶技巧实战",
+    "duration": 90,
+    "resolution": "1080x1920",
+    "fps": 30
+  },
+  "materials": {
+    "videos": [
+      {"id": "v1", "file": "../03-images/slide-01.png", "duration": 3},
+      {"id": "v2", "file": "../03-images/slide-02.png", "duration": 7},
+      {"id": "v3", "file": "../03-images/slide-03.png", "duration": 30},
+      {"id": "v4", "file": "../03-images/slide-04.png", "duration": 40},
+      {"id": "v5", "file": "../03-images/slide-05.png", "duration": 10}
+    ],
+    "audios": [
+      {"id": "a1", "file": "../02-audio/segment-01.wav", "start": 0},
+      {"id": "a2", "file": "../02-audio/segment-02.wav", "start": 3},
+      {"id": "a3", "file": "../02-audio/segment-03.wav", "start": 10},
+      {"id": "a4", "file": "../02-audio/segment-04.wav", "start": 40},
+      {"id": "a5", "file": "../02-audio/segment-05.wav", "start": 80}
+    ]
+  },
+  "tracks": {
+    "video_track": [
+      {"material": "v1", "start": 0, "duration": 3, "transition": "fade"},
+      {"material": "v2", "start": 3, "duration": 7, "transition": "slide"},
+      {"material": "v3", "start": 10, "duration": 30, "transition": "zoom"},
+      {"material": "v4", "start": 40, "duration": 40, "transition": "none"},
+      {"material": "v5", "start": 80, "duration": 10, "transition": "fade"}
+    ],
+    "audio_track": [
+      {"material": "a1", "start": 0, "volume": 1.0},
+      {"material": "a2", "start": 3, "volume": 1.0},
+      {"material": "a3", "start": 10, "volume": 1.0},
+      {"material": "a4", "start": 40, "volume": 1.0},
+      {"material": "a5", "start": 80, "volume": 1.0}
+    ]
+  },
+  "effects": {
+    "transitions": ["fade", "slide", "zoom"],
+    "filters": ["cyberpunk", "neon"],
+    "subtitles": {
+      "enabled": true,
+      "file": "../04-timeline/subtitles.srt",
+      "style": "modern"
+    }
+  }
+}
