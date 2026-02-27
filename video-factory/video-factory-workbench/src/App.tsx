@@ -1,27 +1,18 @@
 import { useState, useEffect } from 'react'
-import { Mic, Image, FileText, Film, Zap, Terminal, CheckCircle2, Loader2, Clock, Layers, Cpu } from 'lucide-react'
+import { Mic, Image, FileText, Film, Zap, Terminal } from 'lucide-react'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function App(): any {
-  const [agents, setAgents] = useState([
-    { name: '脚本创作', status: 'completed', progress: 100, message: '✓ 口播稿已生成' },
-    { name: '语音合成', status: 'completed', progress: 100, message: '✓ CosyVoice音频已生成' },
-    { name: '配图生成', status: 'completed', progress: 100, message: '✓ 13张PPT配图已生成' },
-    { name: '时间轴', status: 'idle', progress: 0, message: '等待执行' },
-    { name: '视频合成', status: 'idle', progress: 0, message: '等待执行' },
-  ])
-  
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [logs, setLogs] = useState<any[]>([])
+function App() {
+  const [logs, setLogs] = useState<{time: string, msg: string}[]>([])
   const [isRunning, setIsRunning] = useState(false)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const addLog = (msg: string): any => {
+  const addLog = (msg: string) => {
     setLogs(prev => [...prev, { time: new Date().toLocaleTimeString('zh-CN'), msg }])
   }
 
   useEffect(() => {
-    addLog('工作台已加载')
+    addLog('工作台已加载 - 真实数据模式')
+    addLog('项目: OpenClaw高阶进化指南')
+    addLog('素材: 13张配图, 配音600秒')
   }, [])
 
   const runAll = () => {
@@ -32,6 +23,14 @@ function App(): any {
       setIsRunning(false)
     }, 2000)
   }
+
+  const agents = [
+    { name: '脚本创作', status: 'completed', progress: 100, message: '✓ 口播稿已生成 (2200字)' },
+    { name: '语音合成', status: 'completed', progress: 100, message: '✓ CosyVoice音频已生成' },
+    { name: '配图生成', status: 'completed', progress: 100, message: '✓ 13张PPT配图已生成' },
+    { name: '时间轴', status: 'idle', progress: 0, message: '等待执行 - Whisper提取' },
+    { name: '视频合成', status: 'idle', progress: 0, message: '等待执行 - FFmpeg合成' },
+  ]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] to-[#1a1a2e] text-white p-6">
@@ -57,6 +56,50 @@ function App(): any {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="grid grid-cols-2 gap-6 mb-8">
+        <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-blue-400" />
+            口播稿
+          </h2>
+          <div className="text-sm text-gray-300 mb-2">2200 字 · 600 秒</div>
+          <a href="/ppt-gen/video2/video2_润色版.txt" target="_blank" className="text-cyan-400 text-sm hover:underline">查看文案 →</a>
+        </div>
+
+        <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Image className="w-5 h-5 text-purple-400" />
+            PPT配图 (13张)
+          </h2>
+          <div className="grid grid-cols-6 gap-2">
+            {Array.from({length: 12}, (_, i) => (
+              <a key={i} href={`/images/slide_${String(i+1).padStart(2, '0')}.png`} target="_blank" className="aspect-video bg-gradient-to-br from-purple-500/20 to-cyan-500/20 rounded flex items-center justify-center text-xs hover:opacity-80 transition">
+                P{i+1}
+              </a>
+            ))}
+            <a href="/images/slide_13.png" target="_blank" className="aspect-video bg-white/10 rounded flex items-center justify-center text-xs hover:opacity-80 transition">+1</a>
+          </div>
+        </div>
+
+        <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Mic className="w-5 h-5 text-green-400" />
+            语音合成
+          </h2>
+          <div className="text-sm text-gray-300 mb-2">600 秒 · CosyVoice克隆</div>
+          <audio controls className="w-full mt-2" src="/ppt-gen/video2/video2_full_narration_cosyvoice2.mp3" />
+        </div>
+
+        <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5 text-yellow-400" />
+            最终视频
+          </h2>
+          <div className="text-sm text-gray-300 mb-2">13秒 · 带转场效果</div>
+          <a href="/video2-output/video2_final_v2.mp4" target="_blank" className="text-cyan-400 text-sm hover:underline">下载视频 →</a>
+        </div>
       </div>
 
       <div className="bg-black/40 rounded-xl p-4 border border-white/10">
