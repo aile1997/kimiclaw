@@ -139,9 +139,9 @@ function App() {
               <button 
                 key={i}
                 onClick={() => openPreview(i)}
-                className="aspect-video bg-gradient-to-br from-purple-500/20 to-cyan-500/20 rounded flex items-center justify-center text-xs hover:opacity-80 transition border border-white/5 cursor-pointer"
+                className="aspect-video rounded overflow-hidden hover:opacity-80 transition border border-white/5 cursor-pointer"
               >
-                P{i+1}
+                <img src={src} alt={`PPT ${i+1}`} className="w-full h-full object-cover" loading="lazy" />
               </button>
             ))}
           </div>
